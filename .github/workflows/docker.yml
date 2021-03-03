@@ -1,0 +1,21 @@
+name: docker
+on:
+  push:
+    branches: [master]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build and push
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          repository: darinmao/jail
+          tag_with_ref: true
+          tag_with_sha: true
+          cache_froms: ghcr.io/darinmao/jail/jail:latest
