@@ -16,7 +16,7 @@ service ctf
   port = 5000
   bind = 0.0.0.0
   server = /bin/timeout
-  server_args = -s 9 ${JAIL_TIME:-30} /jail/chroot --userspec=1000:1000 /srv /app/run
+  server_args = -s 9 ${JAIL_TIME:-30} /jail/chroot
   per_source = ${JAIL_CONNS_PER_IP:-UNLIMITED}
   instances = ${JAIL_CONNS:-UNLIMITED}
   rlimit_as = ${JAIL_MEM:-5242880}

@@ -1,4 +1,10 @@
-FROM debian:buster-slim@sha256:7f5c2603ccccb7fa4fc934bad5494ee9f47a5708ed0233f5cd9200fe616002ad as xinetd
+FROM buildpack-deps:buster as chroot
+
+WORKDIR /jail
+COPY ./chroot/ .
+RUN make
+
+FROM debian:buster-slim as xinetd
 RUN apt-get update && \
     apt-get install -y --no-install-recommends xinetd
 
@@ -11,7 +17,8 @@ RUN adduser -HDu 1000 jail && \
     mknod -m 444 /srv/dev/urandom c 1 9 && \
     echo tcp 6 TCP > /etc/protocols
 
-COPY --from=xinetd /usr/sbin/xinetd /usr/sbin/chroot /jail/
+COPY --from=chroot /jail/chroot /jail/
+COPY --from=xinetd /usr/sbin/xinetd /jail/
 COPY --from=xinetd \
     /lib/x86_64-linux-gnu/libnsl.so.1 \
     /lib/x86_64-linux-gnu/libwrap.so.0 \
